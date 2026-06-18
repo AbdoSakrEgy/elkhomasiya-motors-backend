@@ -35,9 +35,40 @@ Use pnpm; the lockfile is `pnpm-lock.yaml`.
 
 ## Coding Style & Naming Conventions
 
-Use ES modules and strict TypeScript. Keep imports compatible with `moduleResolution: "NodeNext"`. Prefer explicit exported types for shared contracts and Zod schemas for request validation. Follow the existing feature naming style: `auth.controller.ts`, `auth.service.ts`, `auth.route.ts`, `auth.validators.ts`, and `auth.types.ts`.
+Use ES modules and strict TypeScript. Keep imports compatible with `moduleResolution: "NodeNext"`. Prefer explicit exported types for shared contracts and Zod schemas for request validation. Do not use `.extend(` in any `*.validators.ts` file; define shared field schemas as reusable constants and build each `z.object(...)` directly. Follow the existing feature naming style: `auth.controller.ts`, `auth.service.ts`, `auth.route.ts`, `auth.validators.ts`, and `auth.types.ts`.
 
 Use clear service/controller separation: controllers handle HTTP concerns, services contain business logic, and routes wire middleware to controllers.
+
+Keep `src/modules/**` service classes focused on API-facing service operations. Any helper function used by a module `*.service.ts` file that is not itself an API service method must live in that module's `utils/` folder, for example `src/modules/auth/utils/create-session.ts`, `normalize-phone.ts`, and `verify-google-token.ts`. This rule applies to `src/modules/**`, not shared integration utilities outside the modules folder.
+
+In every `*.controller.ts` class, add a method-name banner comment directly above each method:
+
+```ts
+// ---------------------------- methodName ----------------------------
+async methodName() {
+  // ...
+}
+```
+
+In every `*.service.ts` class, add a method-name banner comment directly above each method:
+
+```ts
+// ============================ methodName ============================
+async methodName() {
+  // ...
+}
+```
+
+In every `*.validators.ts` file, add a schema-name banner comment directly above each schema:
+
+```ts
+// ============================ registerSchema ============================
+export const registerSchema = z.object({
+  // ...
+});
+```
+
+For service methods, keep business-flow comments in the existing style. Each logical code block inside a `*.service.ts` method should start with a short `// step: ...` or `// sub-step: ...` comment.
 
 ## Testing Guidelines
 

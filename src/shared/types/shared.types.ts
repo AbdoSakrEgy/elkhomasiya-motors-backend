@@ -3,6 +3,11 @@ export enum Gender {
   female = "FEMALE",
 }
 
+export enum AuthProvider {
+  local = "LOCAL",
+  google = "GOOGLE",
+}
+
 export interface PaginationMeta {
   totalItems: number;
   itemCount: number;

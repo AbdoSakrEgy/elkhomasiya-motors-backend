@@ -17,23 +17,27 @@ import type { CreateUserDTO, UpdateUserDTO } from "./user.validators.js";
  */
 
 export class UserController {
+  // ---------------------------- getAll ----------------------------
   async getAll(req: Request, res: Response): Promise<void> {
     const users = await userService.getAll();
     responseHandler(res,HttpStatusCode.OK, "Users retrieved successfully", users);
   }
 
+  // ---------------------------- getById ----------------------------
   async getById(req: Request, res: Response): Promise<void> {
     const id = req.params["id"] as string;
     const user = await userService.getById(id);
     responseHandler(res,HttpStatusCode.OK, "User retrieved successfully", user);
   }
 
+  // ---------------------------- create ----------------------------
   async create(req: Request, res: Response): Promise<void> {
     const data = req.body as CreateUserDTO;
     const user = await userService.create(data);
     responseHandler(res,HttpStatusCode.CREATED, "User created successfully", user);
   }
 
+  // ---------------------------- update ----------------------------
   async update(req: Request, res: Response): Promise<void> {
     const id = req.params["id"] as string;
     const data = req.body as UpdateUserDTO;
@@ -41,6 +45,7 @@ export class UserController {
     responseHandler(res,HttpStatusCode.OK, "User updated successfully", user);
   }
 
+  // ---------------------------- delete ----------------------------
   async delete(req: Request, res: Response): Promise<void> {
     const id = req.params["id"] as string;
     await userService.delete(id);

@@ -4,7 +4,7 @@ import { BrandModel } from "./models/product/brand.model.js";
 import { CartModel } from "./models/shopping/cart.model.js";
 import { CategoryModel } from "./models/product/category.model.js";
 import { CouponModel } from "./models/shopping/coupon.model.js";
-import { InquiryModel } from "./models/inquiry.model.js";
+import { InquiryModel } from "./models/communication/inquiry.model.js";
 import { OrderModel } from "./models/shopping/order.model.js";
 import { PaymentModel } from "./models/shopping/payment.model.js";
 import { ProductModel } from "./models/product/product.model.js";

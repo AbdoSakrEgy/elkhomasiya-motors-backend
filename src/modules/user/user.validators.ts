@@ -10,6 +10,7 @@ import { z } from "zod";
  * Keep validators in the module folder — they're part of the module's contract.
  */
 
+// ============================ createUserSchema ============================
 export const createUserSchema = z.object({
   name: z
     .string()
@@ -24,6 +25,7 @@ export const createUserSchema = z.object({
   roleId: z.string().min(1, "Role is required"),
 });
 
+// ============================ updateUserSchema ============================
 export const updateUserSchema = z.object({
   name: z
     .string()
@@ -39,6 +41,7 @@ export const updateUserSchema = z.object({
     .optional(),
 });
 
+// ============================ idParamSchema ============================
 export const idParamSchema = z.object({
   id: z.string().min(1, "ID is required"),
 });

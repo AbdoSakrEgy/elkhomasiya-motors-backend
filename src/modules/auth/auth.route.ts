@@ -6,6 +6,8 @@ import { limitAuthRequests } from "../../middlewares/limit.auth.requests.js";
 import {
   registerSchema,
   loginSchema,
+  googleRegisterSchema,
+  googleLoginSchema,
   refreshTokenSchema,
   emailSchema,
   verifyEmailSchema,
@@ -17,17 +19,17 @@ import { authenticate } from "../../middlewares/authenticate.js";
 const router = Router();
 
 router.post(
-  "/register",
+  "/google/register",
   limitAuthRequests,
-  validate({ body: registerSchema }),
-  asyncHandler(authController.register.bind(authController)),
+  validate({ body: googleRegisterSchema }),
+  asyncHandler(authController.googleRegister.bind(authController)),
 );
 
 router.post(
-  "/login",
+  "/google/login",
   limitAuthRequests,
-  validate({ body: loginSchema }),
-  asyncHandler(authController.login.bind(authController)),
+  validate({ body: googleLoginSchema }),
+  asyncHandler(authController.googleLogin.bind(authController)),
 );
 
 router.post(
@@ -50,10 +52,24 @@ router.get(
 );
 
 router.post(
+  "/register",
+  limitAuthRequests,
+  validate({ body: registerSchema }),
+  asyncHandler(authController.register.bind(authController)),
+);
+
+router.post(
   "/verify-email",
   limitAuthRequests,
   validate({ body: verifyEmailSchema }),
   asyncHandler(authController.verifyEmail.bind(authController)),
+);
+
+router.post(
+  "/login",
+  limitAuthRequests,
+  validate({ body: loginSchema }),
+  asyncHandler(authController.login.bind(authController)),
 );
 
 router.post(

@@ -5,45 +5,57 @@ import {
   NotFoundError,
 } from "../../shared/utils/error/app.error.js";
 import { hashData, compareData } from "../../shared/utils/bcrypt.js";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  verifyRefreshToken,
-} from "../../shared/utils/jwt.js";
+import { verifyRefreshToken } from "../../shared/utils/jwt.js";
 import { generateOtp } from "../../shared/utils/generate.otp.js";
 import { sendEmail } from "../../shared/utils/send-email/send.email.js";
 import { template } from "../../shared/utils/send-email/generate.HTML.js";
 import { UserModel } from "../../DB/models/user/user.model.js";
 import { RefreshTokenModel } from "../../DB/models/user/auth.model.js";
 import { RoleModel } from "../../DB/models/user/role.model.js";
+import { AuthProvider } from "../../shared/types/shared.types.js";
 import type {
   RegisterDTO,
   LoginDTO,
+  GoogleRegisterDTO,
+  GoogleLoginDTO,
   VerifyEmailDTO,
   ResetPasswordDTO,
   ChangePasswordDTO,
 } from "./auth.validators.js";
 import type { AuthTokens } from "./auth.types.js";
+import { createSession } from "./utils/create-session.js";
+import { normalizePhone } from "./utils/normalize-phone.js";
+import { verifyGoogleToken } from "./utils/verify-google-token.js";
 
 const CODE_TTL_MS = 10 * 60 * 1000;
 
-const publicUser = (user: any) => ({
-  id: String(user._id),
-  name: user.name,
-  email: user.email,
-  phone: user.phone,
-  roleId: String(user.roleId),
-  emailConfirmed: user.isEmailConfirmed,
-});
-
 export class AuthService {
-  // ============================ register ============================
-  async register(data: RegisterDTO) {
-    // step: check existing user
-    const existingUser = await UserModel.findOne({ email: data.email });
-    if (existingUser) throw new ConflictError("Email already registered");
+  // ============================ googleRegister ============================
+  async googleRegister(data: GoogleRegisterDTO) {
+    // step: verify google identity
+    const googleUser = await verifyGoogleToken(data.googleToken);
+    const normalizedPhone = normalizePhone(data.phone);
 
-    // step: check customer role
+    // step: protect unique google id, email, and phone ownership
+    const [userByGoogleId, userByEmail, userByPhone] = await Promise.all([
+      UserModel.findOne({ googleId: googleUser.googleId, isActive: true }),
+      UserModel.findOne({ email: googleUser.email, isActive: true }),
+      UserModel.findOne({ phone: normalizedPhone, isActive: true }),
+    ]);
+
+    if (userByGoogleId) {
+      throw new ConflictError("Google account is already registered");
+    }
+
+    if (userByEmail) {
+      throw new ConflictError("An account already exists with this email");
+    }
+
+    if (userByPhone) {
+      throw new ConflictError("This phone number is already used");
+    }
+
+    // step: create customer role account
     const customerRole = await RoleModel.findOne({
       slug: "customer",
       isActive: true,
@@ -51,53 +63,19 @@ export class AuthService {
     if (!customerRole)
       throw new BadRequestError("Customer role is not configured");
 
-    // step: generate otp code
-    const verificationCode = generateOtp(6);
-
-    // step: create user
     const user = await UserModel.create({
-      ...data,
-      password: await hashData(data.password),
+      name: googleUser.name,
+      email: googleUser.email,
+      phone: normalizedPhone,
+      profileImage: googleUser.picture,
       roleId: customerRole._id,
-      emailOtp: {
-        otp: await hashData(verificationCode),
-        expiresAt: new Date(Date.now() + CODE_TTL_MS),
-      },
+      googleId: googleUser.googleId,
+      authProvider: AuthProvider.google,
+      isEmailConfirmed: true,
     });
 
-    // step: send otp code via email
-    await sendEmail({
-      to: data.email,
-      subject: "Verify your email",
-      html: template({
-        otpCode: verificationCode,
-        receiverName: data.name,
-        subject: "Verify your email",
-      }),
-    });
-
-    // step: generate tokens
-    const accessToken = generateAccessToken({
-      userId: user._id as any,
-      roleId: user.roleId as any,
-    });
-    const refreshToken = generateRefreshToken({
-      userId: user._id as any,
-      roleId: user.roleId as any,
-    });
-
-    // step: create refresh token record
-    const payload = verifyRefreshToken(refreshToken);
-    await RefreshTokenModel.create({
-      userId: user._id,
-      token: refreshToken,
-      expiresAt: new Date(payload.exp * 1000),
-    });
-
-    // step: result
+    const tokens = await createSession(String(user._id), String(user.roleId));
     return {
-      accessToken,
-      refreshToken,
       user: {
         id: String(user._id),
         name: user.name,
@@ -106,27 +84,39 @@ export class AuthService {
         roleId: String(user.roleId),
         emailConfirmed: user.isEmailConfirmed,
       },
+      ...tokens,
     };
   }
 
-  // ============================ login ============================
-  async login(data: LoginDTO) {
-    // step: find active user
-    const user = await UserModel.findOne({
-      email: data.email,
-      isActive: true,
-    }).select("+password");
+  // ============================ googleLogin ============================
+  async googleLogin(data: GoogleLoginDTO) {
+    // step: verify google identity
+    const googleUser = await verifyGoogleToken(data.googleToken);
 
-    // step: validate password
-    if (!user || !(await compareData(data.password, user.password))) {
-      throw new UnauthorizedError("Invalid email or password");
-    }
+    // step: find google account
+    const user = await UserModel.findOne({
+      googleId: googleUser.googleId,
+      authProvider: AuthProvider.google,
+      isActive: true,
+    });
+
+    if (!user) throw new UnauthorizedError("Google account is not registered");
 
     // step: create auth session
-    const tokens = await this.createSession(String(user._id), String(user.roleId));
+    const tokens = await createSession(String(user._id), String(user.roleId));
 
     // step: result
-    return { user: publicUser(user), ...tokens };
+    return {
+      user: {
+        id: String(user._id),
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        roleId: String(user.roleId),
+        emailConfirmed: user.isEmailConfirmed,
+      },
+      ...tokens,
+    };
   }
 
   // ============================ refreshToken ============================
@@ -148,7 +138,7 @@ export class AuthService {
     await storedToken.save();
 
     // step: create new auth session
-    return this.createSession(oldPayload.userId, oldPayload.roleId);
+    return createSession(oldPayload.userId, oldPayload.roleId);
   }
 
   // ============================ logout ============================
@@ -167,7 +157,71 @@ export class AuthService {
     if (!user || !user.isActive) throw new NotFoundError("User");
 
     // step: result
-    return publicUser(user);
+    return {
+      id: String(user._id),
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      roleId: String(user.roleId),
+      emailConfirmed: user.isEmailConfirmed,
+    };
+  }
+
+  // ============================ register ============================
+  async register(data: RegisterDTO) {
+    // step: check existing user
+    const existingUser = await UserModel.findOne({ email: data.email });
+    if (existingUser) throw new ConflictError("Email already registered");
+
+    // step: check customer role
+    const customerRole = await RoleModel.findOne({
+      slug: "customer",
+      isActive: true,
+    });
+    if (!customerRole)
+      throw new BadRequestError("Customer role is not configured");
+
+    // step: generate otp code
+    const verificationCode = generateOtp(6);
+
+    // step: create user
+    const user = await UserModel.create({
+      ...data,
+      password: await hashData(data.password),
+      authProvider: AuthProvider.local,
+      roleId: customerRole._id,
+      emailOtp: {
+        otp: await hashData(verificationCode),
+        expiresAt: new Date(Date.now() + CODE_TTL_MS),
+      },
+    });
+
+    // step: send otp code via email
+    await sendEmail({
+      to: data.email,
+      subject: "Verify your email",
+      html: template({
+        otpCode: verificationCode,
+        receiverName: data.name,
+        subject: "Verify your email",
+      }),
+    });
+
+    // step: create auth session
+    const tokens = await createSession(String(user._id), String(user.roleId));
+
+    // step: result
+    return {
+      user: {
+        id: String(user._id),
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        roleId: String(user.roleId),
+        emailConfirmed: user.isEmailConfirmed,
+      },
+      ...tokens,
+    };
   }
 
   // ============================ verifyEmail ============================
@@ -183,7 +237,8 @@ export class AuthService {
 
     // step: validate otp code
     const isExpired =
-      !user.emailOtp?.expiresAt || user.emailOtp.expiresAt.getTime() < Date.now();
+      !user.emailOtp?.expiresAt ||
+      user.emailOtp.expiresAt.getTime() < Date.now();
     const isValid =
       user.emailOtp?.otp && (await compareData(data.code, user.emailOtp.otp));
 
@@ -192,8 +247,39 @@ export class AuthService {
 
     // step: confirm email
     user.isEmailConfirmed = true;
-    user.set("emailOtp", undefined);
+    user.emailOtp = undefined;
     await user.save();
+  }
+
+  // ============================ login ============================
+  async login(data: LoginDTO) {
+    // step: find active user
+    const user = await UserModel.findOne({
+      email: data.email,
+      isActive: true,
+      authProvider: AuthProvider.local,
+    }).select("+password");
+
+    // step: validate password
+    if (!user?.password || !(await compareData(data.password, user.password))) {
+      throw new UnauthorizedError("Invalid email or password");
+    }
+
+    // step: create auth session
+    const tokens = await createSession(String(user._id), String(user.roleId));
+
+    // step: result
+    return {
+      user: {
+        id: String(user._id),
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        roleId: String(user.roleId),
+        emailConfirmed: user.isEmailConfirmed,
+      },
+      ...tokens,
+    };
   }
 
   // ============================ resendVerificationEmail ============================
@@ -231,9 +317,11 @@ export class AuthService {
   // ============================ forgotPassword ============================
   async forgotPassword(email: string): Promise<void> {
     // step: find active user with password otp
-    const user = await UserModel.findOne({ email, isActive: true }).select(
-      "+passwordOtp.otp +passwordOtp.expiresAt",
-    );
+    const user = await UserModel.findOne({
+      email,
+      isActive: true,
+      authProvider: AuthProvider.local,
+    }).select("+passwordOtp.otp +passwordOtp.expiresAt");
 
     // step: hide user existence
     if (!user) return;
@@ -264,6 +352,7 @@ export class AuthService {
     const user = await UserModel.findOne({
       email: data.email,
       isActive: true,
+      authProvider: AuthProvider.local,
     }).select("+passwordOtp.otp +passwordOtp.expiresAt");
 
     // step: check user
@@ -283,7 +372,7 @@ export class AuthService {
     // step: update password
     user.password = await hashData(data.password);
     user.credentialsChangedAt = new Date();
-    user.set("passwordOtp", undefined);
+    user.passwordOtp = undefined;
     await user.save();
 
     // step: revoke active sessions
@@ -296,11 +385,17 @@ export class AuthService {
   // ============================ changePassword ============================
   async changePassword(userId: string, data: ChangePasswordDTO): Promise<void> {
     // step: find active user with password
-    const user = await UserModel.findById(userId).select("+password");
+    const user = await UserModel.findOne({
+      _id: userId,
+      authProvider: AuthProvider.local,
+    }).select("+password");
 
     // step: validate current password
     if (!user || !user.isActive) throw new NotFoundError("User");
-    if (!(await compareData(data.currentPassword, user.password))) {
+    if (
+      !user.password ||
+      !(await compareData(data.currentPassword, user.password))
+    ) {
       throw new UnauthorizedError("Current password is incorrect");
     }
 
@@ -314,29 +409,6 @@ export class AuthService {
       { userId: user._id, revokedAt: { $exists: false } },
       { revokedAt: new Date() },
     );
-  }
-
-  // ============================ createSession ============================
-  private async createSession(
-    userId: string,
-    roleId: string,
-  ): Promise<AuthTokens> {
-    // step: generate tokens
-    const accessToken = generateAccessToken({ userId, roleId });
-    const refreshToken = generateRefreshToken({ userId, roleId });
-
-    // step: read refresh token payload
-    const payload = verifyRefreshToken(refreshToken);
-
-    // step: create refresh token record
-    await RefreshTokenModel.create({
-      userId,
-      token: refreshToken,
-      expiresAt: new Date(payload.exp * 1000),
-    });
-
-    // step: result
-    return { accessToken, refreshToken };
   }
 }
 

@@ -76,6 +76,9 @@ export const env = {
   // Firebase
   FIREBASE_PROJECT_ID: process.env["FIREBASE_PROJECT_ID"] ?? "",
 
+  // Google OAuth
+  GOOGLE_CLIENT_ID: process.env["GOOGLE_CLIENT_ID"] ?? "",
+
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: parseInt(
     process.env["RATE_LIMIT_WINDOW_MS"] ?? "900000",

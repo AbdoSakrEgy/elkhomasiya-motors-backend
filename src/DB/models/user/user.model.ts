@@ -5,7 +5,7 @@ import mongoose, {
   type Model,
   Types,
 } from "mongoose";
-import { Gender } from "../../../shared/types/shared.types.js";
+import { AuthProvider, Gender } from "../../../shared/types/shared.types.js";
 
 export interface IUser {
   // profile
@@ -18,7 +18,9 @@ export interface IUser {
   // access
   roleId: Types.ObjectId;
   email: string;
-  password: string;
+  password?: string;
+  authProvider: AuthProvider;
+  googleId?: string;
   isEmailConfirmed: boolean;
   credentialsChangedAt?: Date;
 
@@ -77,7 +79,19 @@ const userSchema = new Schema<IUser>(
       unique: true,
       required: true,
     },
-    password: { type: String, required: true, select: false },
+    password: {
+      type: String,
+      required(this: IUser) {
+        return this.authProvider === AuthProvider.local;
+      },
+      select: false,
+    },
+    authProvider: {
+      type: String,
+      enum: Object.values(AuthProvider),
+      default: AuthProvider.local,
+    },
+    googleId: { type: String, trim: true, unique: true, sparse: true },
     isEmailConfirmed: { type: Boolean, default: false },
     credentialsChangedAt: Date,
 
@@ -113,6 +127,7 @@ const userSchema = new Schema<IUser>(
 );
 
 userSchema.index({ roleId: 1 });
+userSchema.index({ authProvider: 1 });
 
 export type User = InferSchemaType<typeof userSchema>;
 
