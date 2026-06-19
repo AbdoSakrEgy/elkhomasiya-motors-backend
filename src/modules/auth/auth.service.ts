@@ -3,6 +3,7 @@ import {
   UnauthorizedError,
   ConflictError,
   NotFoundError,
+  ServiceUnavailableError,
 } from "../../shared/utils/error/app.error.js";
 import { hashData, compareData } from "../../shared/utils/bcrypt.js";
 import { verifyRefreshToken } from "../../shared/utils/jwt.js";
@@ -22,7 +23,7 @@ import type {
   ResetPasswordDTO,
   ChangePasswordDTO,
 } from "./auth.validators.js";
-import type { AuthTokens } from "./auth.types.js";
+import type { AuthTokens, RegisterResponse } from "./auth.types.js";
 import { createSession } from "./utils/create-session.js";
 import { normalizePhone } from "./utils/normalize-phone.js";
 import { verifyGoogleToken } from "./utils/verify-google-token.js";
@@ -175,7 +176,7 @@ export class AuthService {
   }
 
   // ============================ register ============================
-  async register(data: RegisterDTO) {
+  async register(data: RegisterDTO): Promise<RegisterResponse> {
     // step: check existing user
     const existingUser = await UserModel.findOne({ email: data.email });
     if (existingUser) throw new ConflictError("Email already registered");
@@ -204,7 +205,7 @@ export class AuthService {
     });
 
     // step: send otp code via email
-    const { isEmailSended, info } = await sendEmail({
+    const { isEmailSent } = await sendEmail({
       to: data.email,
       subject: "Verify your email",
       html: template({
@@ -228,6 +229,7 @@ export class AuthService {
         emailConfirmed: user.isEmailConfirmed,
       },
       ...tokens,
+      verificationEmailSent: isEmailSent,
     };
   }
 
@@ -279,7 +281,7 @@ export class AuthService {
     await user.save();
 
     // step: send otp code via email
-    await sendEmail({
+    const { isEmailSent } = await sendEmail({
       to: email,
       subject: "Verify your email",
       html: template({
@@ -288,6 +290,13 @@ export class AuthService {
         subject: "Verify your email",
       }),
     });
+
+    // step: report delivery failure so the customer can retry
+    if (!isEmailSent) {
+      throw new ServiceUnavailableError(
+        "Unable to send verification email — please try again later",
+      );
+    }
   }
 
   // ============================ login ============================
@@ -342,7 +351,7 @@ export class AuthService {
     await user.save();
 
     // step: send password reset email
-    await sendEmail({
+    const { isEmailSent } = await sendEmail({
       to: email,
       subject: "Reset your password",
       html: template({
@@ -351,6 +360,9 @@ export class AuthService {
         subject: "Reset your password",
       }),
     });
+
+    // step: hide delivery failure to avoid exposing registered emails
+    if (!isEmailSent) return;
   }
 
   // ============================ resetPassword ============================

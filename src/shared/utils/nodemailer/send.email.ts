@@ -2,6 +2,10 @@ import { createTransport } from "nodemailer";
 import { env } from "../../../config/env.js";
 import { logger } from "../../../config/logger.js";
 
+interface EmailDeliveryResult {
+  isEmailSent: boolean;
+}
+
 export const sendEmail = async ({
   to,
   subject,
@@ -10,7 +14,7 @@ export const sendEmail = async ({
   to: string;
   subject: string;
   html: string;
-}) => {
+}): Promise<EmailDeliveryResult> => {
   const transporter = createTransport({
     host: env.NODEMAILER_HOST as string,
     port: env.NODEMAILER_PORT,
@@ -31,11 +35,19 @@ export const sendEmail = async ({
       subject, // Subject line
       html, // html body
     });
-    const isEmailSended =
+    const isEmailSent =
       Array.isArray(info?.accepted) && info.accepted.length > 0;
-    return { isEmailSended, info };
+
+    if (!isEmailSent) {
+      logger.warn(
+        { to, subject, rejected: info.rejected },
+        "Email was not accepted for delivery",
+      );
+    }
+
+    return { isEmailSent };
   } catch (err) {
     logger.error({ err, to, subject }, "Email send failed");
-    return { isEmailSended: false, err: err + "" };
+    return { isEmailSent: false };
   }
 };

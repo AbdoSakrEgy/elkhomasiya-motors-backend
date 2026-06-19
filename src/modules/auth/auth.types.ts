@@ -19,3 +19,7 @@ export interface AuthUser {
 export interface AuthResponse extends AuthTokens {
   user: AuthUser;
 }
+
+export interface RegisterResponse extends AuthResponse {
+  verificationEmailSent: boolean;
+}
