@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { inquiryService } from "./inquiry.service.js";
 import { responseHandler } from "../../shared/utils/response/response.handler.js";
 import { HttpStatusCode } from "../../shared/utils/response/http.status.code.js";
+import type { AuthPayload } from "../../shared/types/jwt.types.js";
 import type {
   CreateInquiryDTO,
   ListInquiriesQueryDTO,
@@ -11,7 +12,11 @@ import type {
 export class InquiryController {
   // ---------------------------- create ----------------------------
   async create(req: Request, res: Response): Promise<void> {
-    const inquiry = await inquiryService.create(req.body as CreateInquiryDTO);
+    const payload = (req as Request & { payload?: AuthPayload }).payload;
+    const inquiry = await inquiryService.create(
+      req.body as CreateInquiryDTO,
+      payload?.userId,
+    );
     responseHandler(
       res,
       HttpStatusCode.CREATED,
@@ -37,7 +42,12 @@ export class InquiryController {
   // ---------------------------- getById ----------------------------
   async getById(req: Request, res: Response): Promise<void> {
     const inquiry = await inquiryService.getById(req.params["id"] as string);
-    responseHandler(res, HttpStatusCode.OK, "Inquiry retrieved successfully", inquiry);
+    responseHandler(
+      res,
+      HttpStatusCode.OK,
+      "Inquiry retrieved successfully",
+      inquiry,
+    );
   }
 
   // ---------------------------- update ----------------------------
@@ -46,7 +56,12 @@ export class InquiryController {
       req.params["id"] as string,
       req.body as UpdateInquiryDTO,
     );
-    responseHandler(res, HttpStatusCode.OK, "Inquiry updated successfully", inquiry);
+    responseHandler(
+      res,
+      HttpStatusCode.OK,
+      "Inquiry updated successfully",
+      inquiry,
+    );
   }
 }
 

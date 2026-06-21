@@ -45,6 +45,8 @@ Route paths must remain distinct and descriptive even when different HTTP method
 
 Keep `src/modules/**` service classes focused on API-facing service operations. Any helper function used by a module `*.service.ts` file that is not itself an API service method must live in that module's `utils/` folder, for example `src/modules/auth/utils/create-session.ts`, `normalize-phone.ts`, and `verify-google-token.ts`. This rule applies to `src/modules/**`, not shared integration utilities outside the modules folder.
 
+For every API service method that retrieves a collection using pagination, limits, filters, sorting, search, or similar query options, write the query-building logic directly inside that service method (for example, `async listProfiles(query: ListProfilesQueryDTO)`). Do not extract this logic into a separate helper function or a file in the module's `utils/` folder.
+
 In every `*.controller.ts` class, add a method-name banner comment directly above each method:
 
 ```ts

@@ -1,4 +1,6 @@
+import type { FilterQuery } from "mongoose";
 import { InquiryModel } from "../../DB/models/communication/inquiry.model.js";
+import type { Inquiry } from "../../DB/models/communication/inquiry.model.js";
 import { ProductModel } from "../../DB/models/product/product.model.js";
 import { NotFoundError } from "../../shared/utils/error/app.error.js";
 import type {
@@ -6,12 +8,11 @@ import type {
   ListInquiriesQueryDTO,
   UpdateInquiryDTO,
 } from "./inquiry.validators.js";
-import { buildInquiryQuery } from "./utils/build-inquiry-query.js";
 import { normalizeInquiryPhone } from "./utils/normalize-inquiry-phone.js";
 
 export class InquiryService {
   // ============================ create ============================
-  async create(data: CreateInquiryDTO) {
+  async create(data: CreateInquiryDTO, userId?: string) {
     // step: validate the referenced public product
     if (data.productId) {
       const product = await ProductModel.exists({
@@ -25,14 +26,34 @@ export class InquiryService {
     // step: create inquiry with normalized contact data
     return InquiryModel.create({
       ...data,
+      ...(userId && { userId }),
       phone: normalizeInquiryPhone(data.phone),
     });
   }
 
   // ============================ getAll ============================
   async getAll(query: ListInquiriesQueryDTO) {
-    // step: build administration query
-    const { filter, page, limit } = buildInquiryQuery(query);
+    // step: prepare pagination
+    const page = Math.max(Number(query.page ?? 1), 1);
+    const limit = Math.min(Math.max(Number(query.limit ?? 20), 1), 100);
+
+    // step: build administration filters
+    const filter: FilterQuery<Inquiry> = {};
+
+    if (query.status) filter.status = query.status;
+    if (query.type) filter.type = query.type;
+    if (query.productId) filter.productId = query.productId;
+
+    // sub-step: apply escaped text search
+    if (query.search) {
+      const keyword = query.search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.$or = [
+        { customerName: { $regex: keyword, $options: "i" } },
+        { phone: { $regex: keyword, $options: "i" } },
+        { email: { $regex: keyword, $options: "i" } },
+        { message: { $regex: keyword, $options: "i" } },
+      ];
+    }
 
     // step: retrieve inquiries and count
     const [inquiries, totalItems] = await Promise.all([

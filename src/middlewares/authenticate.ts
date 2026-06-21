@@ -46,3 +46,16 @@ export const authenticate = async (
     next(error);
   }
 };
+
+export const optionalAuthenticate = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  if (!req.headers.authorization) {
+    next();
+    return;
+  }
+
+  void authenticate(req, res, next);
+};

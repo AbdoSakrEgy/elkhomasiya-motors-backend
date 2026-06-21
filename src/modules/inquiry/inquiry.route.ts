@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { inquiryController } from "./inquiry.controller.js";
-import { authenticate } from "../../middlewares/authenticate.js";
+import {
+  authenticate,
+  optionalAuthenticate,
+} from "../../middlewares/authenticate.js";
 import { authorize } from "../../middlewares/authorize.js";
 import { limitCreateInquiryRequests } from "../../middlewares/limit.requests.js";
 import { validate } from "../../middlewares/validate.js";
@@ -17,9 +20,11 @@ const router = Router();
 router.post(
   "/create",
   limitCreateInquiryRequests,
+  optionalAuthenticate,
   validate({ body: createInquirySchema }),
   asyncHandler(inquiryController.create.bind(inquiryController)),
 );
+
 router.get(
   "/get-all",
   authenticate,
@@ -27,6 +32,7 @@ router.get(
   validate({ query: listInquiriesQuerySchema }),
   asyncHandler(inquiryController.getAll.bind(inquiryController)),
 );
+
 router.get(
   "/get-by-id/:id",
   authenticate,
@@ -34,6 +40,7 @@ router.get(
   validate({ params: inquiryIdParamSchema }),
   asyncHandler(inquiryController.getById.bind(inquiryController)),
 );
+
 router.patch(
   "/update/:id",
   authenticate,
