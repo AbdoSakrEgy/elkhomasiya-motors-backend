@@ -9,7 +9,7 @@ import { hashData, compareData } from "../../shared/utils/bcrypt.js";
 import { verifyRefreshToken } from "../../shared/utils/jwt.js";
 import { generateOtp } from "../../shared/utils/generate.otp.js";
 import { sendEmail } from "../../shared/utils/nodemailer/send.email.js";
-import { template } from "../../shared/utils/nodemailer/generate.HTML2.js";
+import { template } from "../../shared/utils/nodemailer/generate.HTML.js";
 import { UserModel } from "../../DB/models/user/user.model.js";
 import { RefreshTokenModel } from "../../DB/models/user/auth.model.js";
 import { RoleModel } from "../../DB/models/user/role.model.js";

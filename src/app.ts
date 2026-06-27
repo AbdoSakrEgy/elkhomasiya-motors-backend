@@ -33,6 +33,9 @@ import inquiryRoutes from "./modules/inquiry/inquiry.route.js";
  */
 
 const app = express();
+// Trust the deployment proxy so rate limiting uses the real client IP.
+app.set("trust proxy", 1);
+
 app.use(helmet()); // Sets security-related HTTP headers
 app.use(
   cors({
