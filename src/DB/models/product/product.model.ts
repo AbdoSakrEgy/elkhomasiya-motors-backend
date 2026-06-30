@@ -60,7 +60,7 @@ const productSchema = new Schema(
       lowercase: true,
       unique: true,
     },
-    description: { type: localizedOptionalSchema },
+    description: { type: localizedRequiredSchema, required: true },
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: "Category",
@@ -76,7 +76,7 @@ const productSchema = new Schema(
       unique: true,
     },
     images: { type: [String], default: [] },
-    price: { type: Number, required: true, min: 0 },
+    price: { type: Number, min: 0 },
     discountPrice: { type: Number, min: 0 },
     currency: { type: String, enum: ["EGP"], default: "EGP" },
     stockQuantity: { type: Number, default: 0, min: 0 },

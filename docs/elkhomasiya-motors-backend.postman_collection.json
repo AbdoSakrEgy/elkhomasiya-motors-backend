@@ -1,0 +1,2387 @@
+{
+  "info": {
+    "_postman_id": "719e55cd-b6c1-4bd8-9931-24c9b29e9b1e",
+    "name": "elkhomasiya-motors-backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "25813178",
+    "_collection_link": "https://go.postman.co/collection/25813178-719e55cd-b6c1-4bd8-9931-24c9b29e9b1e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "health",
+      "item": [
+        {
+          "name": "health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/health",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "google-register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json = {};",
+                  "try { json = pm.response.json(); } catch (error) {}",
+                  "",
+                  "if (json.data?.accessToken) {",
+                  "  pm.collectionVariables.set(\"ACCESS_TOKEN\", json.data.accessToken);",
+                  "  pm.environment.set(\"ACCESS_TOKEN\", json.data.accessToken);",
+                  "}",
+                  "",
+                  "if (json.data?.refreshToken) {",
+                  "  pm.collectionVariables.set(\"REFRESH_TOKEN\", json.data.refreshToken);",
+                  "  pm.environment.set(\"REFRESH_TOKEN\", json.data.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"googleToken\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6IjMwMzViYjg2ZDk5ZjIyZTYxMzQ2N2E2NjgwODI1ZWViMGQ4MTM5YTIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI4MDk2NzE5MjcwOTQtOHN0cm9lcGo5czBjdGNrOTF1MWlqNW9nYm1jZXBtZXIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI4MDk2NzE5MjcwOTQtOHN0cm9lcGo5czBjdGNrOTF1MWlqNW9nYm1jZXBtZXIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDIzMzczMTg5NDI5MzM5NTE5NDgiLCJlbWFpbCI6ImFiZHVscmFoaW1zYWtyMDFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiJkUUdGTFNkdFRPTnJUcS0wczJhMUN3IiwibmFtZSI6IkFiZHVscmFoaW0gU2FrciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLaG83RW90MkR4Nkg4R25ORVFkSXFtbHNnWGFtMGNDODRwWEVYY1hJN09BeTZwWk5RPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6IkFiZHVscmFoaW0iLCJmYW1pbHlfbmFtZSI6IlNha3IiLCJpYXQiOjE3ODE4MjM1OTgsImV4cCI6MTc4MTgyNzE5OH0.RUzu7WRPjeLtuvDKlHQiO3LunwMsxIxA3YB0siE3wajgFhNw6vIW4W6SNRSwEBA1tTYmujAqMUORVSaG49HdWU-iAkr0D-Xq9CwZSY7ade8dn1Te5ElkTOLwgEkz3pyr8gzJUiNrUc_FR9bE83SJqWayHF-mBGmUkzdcMukaarMM2R8NqH1Aji1tdcTWrr0NHlEzQ47PP6Oak5gAHbsWXnvh8ghTiFXc0gMCSL0n611LiFC0j8NmWDI8mZ4VJkIpOULr0-zK-PHYQ0PLJ0EDz9Wio-1IBQyRkZTnwzWPxwysPJhM2lPAVIHL6v7SgagClUU28zMvwpsN7Uee9tfKGA\",\n    \"phone\": \"01007137667\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/google-register",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "google-register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "google-login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json = {};",
+                  "try { json = pm.response.json(); } catch (error) {}",
+                  "",
+                  "if (json.data?.accessToken) {",
+                  "  pm.collectionVariables.set(\"ACCESS_TOKEN\", json.data.accessToken);",
+                  "  pm.environment.set(\"ACCESS_TOKEN\", json.data.accessToken);",
+                  "}",
+                  "",
+                  "if (json.data?.refreshToken) {",
+                  "  pm.collectionVariables.set(\"REFRESH_TOKEN\", json.data.refreshToken);",
+                  "  pm.environment.set(\"REFRESH_TOKEN\", json.data.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"googleToken\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6IjMwMzViYjg2ZDk5ZjIyZTYxMzQ2N2E2NjgwODI1ZWViMGQ4MTM5YTIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI4MDk2NzE5MjcwOTQtOHN0cm9lcGo5czBjdGNrOTF1MWlqNW9nYm1jZXBtZXIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI4MDk2NzE5MjcwOTQtOHN0cm9lcGo5czBjdGNrOTF1MWlqNW9nYm1jZXBtZXIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDIzMzczMTg5NDI5MzM5NTE5NDgiLCJlbWFpbCI6ImFiZHVscmFoaW1zYWtyMDFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiJkUUdGTFNkdFRPTnJUcS0wczJhMUN3IiwibmFtZSI6IkFiZHVscmFoaW0gU2FrciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLaG83RW90MkR4Nkg4R25ORVFkSXFtbHNnWGFtMGNDODRwWEVYY1hJN09BeTZwWk5RPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6IkFiZHVscmFoaW0iLCJmYW1pbHlfbmFtZSI6IlNha3IiLCJpYXQiOjE3ODE4MjM1OTgsImV4cCI6MTc4MTgyNzE5OH0.RUzu7WRPjeLtuvDKlHQiO3LunwMsxIxA3YB0siE3wajgFhNw6vIW4W6SNRSwEBA1tTYmujAqMUORVSaG49HdWU-iAkr0D-Xq9CwZSY7ade8dn1Te5ElkTOLwgEkz3pyr8gzJUiNrUc_FR9bE83SJqWayHF-mBGmUkzdcMukaarMM2R8NqH1Aji1tdcTWrr0NHlEzQ47PP6Oak5gAHbsWXnvh8ghTiFXc0gMCSL0n611LiFC0j8NmWDI8mZ4VJkIpOULr0-zK-PHYQ0PLJ0EDz9Wio-1IBQyRkZTnwzWPxwysPJhM2lPAVIHL6v7SgagClUU28zMvwpsN7Uee9tfKGA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/google-login",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "google-login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refresh-token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json = {};",
+                  "try { json = pm.response.json(); } catch (error) {}",
+                  "",
+                  "if (json.data?.accessToken) {",
+                  "  pm.collectionVariables.set(\"ACCESS_TOKEN\", json.data.accessToken);",
+                  "  pm.environment.set(\"ACCESS_TOKEN\", json.data.accessToken);",
+                  "}",
+                  "",
+                  "if (json.data?.refreshToken) {",
+                  "  pm.collectionVariables.set(\"REFRESH_TOKEN\", json.data.refreshToken);",
+                  "  pm.environment.set(\"REFRESH_TOKEN\", json.data.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTM0Nzg5ZGNlZTAwMTRkYTQzZGViMWQiLCJyb2xlSWQiOiI2YTJjMjllN2ZmNzFmNWNjMTQ1MjJhZjkiLCJpYXQiOjE3ODE4MjM5MjMsImV4cCI6MTc4MjQyODcyMywianRpIjoiODA2NCJ9.Q_FDWUpwdtEuA4Y68GILini8cPu4_NKhtsguOR1oYJc\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/refresh-token",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{REFRESH_TOKEN}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/logout",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/auth/me",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json = {};",
+                  "try { json = pm.response.json(); } catch (error) {}",
+                  "",
+                  "if (json.data?.accessToken) {",
+                  "  pm.collectionVariables.set(\"ACCESS_TOKEN\", json.data.accessToken);",
+                  "  pm.environment.set(\"ACCESS_TOKEN\", json.data.accessToken);",
+                  "}",
+                  "",
+                  "if (json.data?.refreshToken) {",
+                  "  pm.collectionVariables.set(\"REFRESH_TOKEN\", json.data.refreshToken);",
+                  "  pm.environment.set(\"REFRESH_TOKEN\", json.data.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Abdulrahim Sakr\",\n    \"age\": 25,\n    \"gender\": \"male\", // male | female\n    \"phone\": \"01007137667\",\n    \"email\": \"abdulrahimsakr01@gmail.com\",\n    \"password\": \"Abdo1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/register",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify-email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"abdulrahimsakr01@gmail.com\",\n    \"code\": \"939496\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/verify-email",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "verify-email"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "resend-verification-email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"abdulrahimsakr01@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/resend-verification-email",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "resend-verification-email"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json = {};",
+                  "try { json = pm.response.json(); } catch (error) {}",
+                  "",
+                  "if (json.data?.accessToken) {",
+                  "  pm.collectionVariables.set(\"ACCESS_TOKEN\", json.data.accessToken);",
+                  "  pm.environment.set(\"ACCESS_TOKEN\", json.data.accessToken);",
+                  "}",
+                  "",
+                  "if (json.data?.refreshToken) {",
+                  "  pm.collectionVariables.set(\"REFRESH_TOKEN\", json.data.refreshToken);",
+                  "  pm.environment.set(\"REFRESH_TOKEN\", json.data.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"abdulrahimsakr01@gmail.com\", // abdelraheemsakr@gmail.com\n    \"password\": \"Abdo1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/login",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forgot-password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"abdulrahimsakr01@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/forgot-password",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "reset-password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"abdulrahimsakr01@gmail.com\",\n    \"code\": \"809348\",\n    \"password\": \"Abdo1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/reset-password",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "change-password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"currentPassword\": \"Abdo1234aa\",\n    \"newPassword\": \"Abdo1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/change-password",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "change-password"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "profiles",
+      "item": [
+        {
+          "name": "get-profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/profiles/get-profile",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "profiles",
+                "get-profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Updated Customer",
+                  "type": "text"
+                },
+                {
+                  "key": "age",
+                  "value": "26",
+                  "type": "text"
+                },
+                {
+                  "key": "gender",
+                  "value": "male",
+                  "type": "text",
+                  "description": "male | female"
+                },
+                {
+                  "key": "phone",
+                  "value": "01007137666",
+                  "type": "text"
+                },
+                {
+                  "key": "profileImage",
+                  "type": "file",
+                  "description": "Optional image file",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/profiles/update-profile",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "profiles",
+                "update-profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "list-profiles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/profiles/list-profiles?page=1&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "profiles",
+                "list-profiles"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional search text",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "created_at_desc",
+                  "description": "created_at_asc | created_at_desc | updated_at_asc | updated_at_desc",
+                  "disabled": true
+                },
+                {
+                  "key": "roleId",
+                  "value": "6a38378ae91c7c1cb510cdbe",
+                  "description": "Optional role id",
+                  "disabled": true
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "description": "true | false",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-profile-by-id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/profiles/get-profile-by-id/:id",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "profiles",
+                "get-profile-by-id",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "6a383807e4c983c56c82bb21"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-profile-status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/profiles/update-profile-status/:id",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "profiles",
+                "update-profile-status",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "6a383807e4c983c56c82bb21"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "inquiries",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"customerName\": \"Test Customer\",\n    \"phone\": [\n        \"01007137666\"\n    ],\n    \"email\": \"warda@gmail.com\",\n    \"productId\": \"6a38378be91c7c1cb510cdd2\",\n    \"quantity\": 1,\n    \"requestType\": \"purchase_request\", // purchase_request\n    \"locationLink\": \"https://maps.google.com/?q=30.0444,31.2357\",\n    \"locationDescription\": \"Customer delivery location\",\n    \"message\": \"I want to ask about price and availability.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/inquiries/create",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "inquiries",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create-with-response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"6a4056113dcf8e10e78f4294\",\n    \"productId\": \"6a38378be91c7c1cb510cdd2\",\n    \"quantity\": 1,\n    \"requestType\": \"purchase_request\",\n    \"message\": \"Customer contacted admin by phone.\",\n    \"adminResponse\": {\n        \"paymentMethod\": \"Cash on delivery\",\n        \"deliveryEstimate\": \"2 days\",\n        \"productPrice\": 5000,\n        \"shippingPrice\": 200,\n        \"totalPrice\": 5200\n    },\n    \"adminNotes\": \"Admin created this inquiry after a phone call.\",\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/inquiries/create-with-response",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "inquiries",
+                "create-with-response"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-all",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/inquiries/get-all?page=1&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "inquiries",
+                "get-all"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional search text",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "created_at_desc",
+                  "description": "created_at_asc | created_at_desc | updated_at_asc | updated_at_desc",
+                  "disabled": true
+                },
+                {
+                  "key": "requestStatus",
+                  "value": "pending_review",
+                  "description": "pending_review | completed",
+                  "disabled": true
+                },
+                {
+                  "key": "requestType",
+                  "value": "purchase_request",
+                  "description": "purchase_request",
+                  "disabled": true
+                },
+                {
+                  "key": "productId",
+                  "value": "6a383807e4c983c56c82bb21",
+                  "description": "Optional product id",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-by-id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/inquiries/get-by-id/:id",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "inquiries",
+                "get-by-id",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "6a383807e4c983c56c82bb21"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestStatus\": \"completed\", // pending_review | completed\n  \"adminResponse\": {\n    \"paymentMethod\": \"Cash on delivery\",\n    \"deliveryEstimate\": \"2 days\",\n    \"productPrice\": 5000,\n    \"shippingPrice\": 200,\n    \"totalPrice\": 5200\n  },\n  \"adminNotes\": \"Followed up with the customer.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/inquiries/update/:id",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "inquiries",
+                "update",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{INQUIRY_ID}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "brands",
+      "item": [
+        {
+          "name": "get-all",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/brands/get-all?page=1&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "brands",
+                "get-all"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional search text",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "created_at_desc",
+                  "description": "created_at_asc | created_at_desc | updated_at_asc | updated_at_desc",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-all-for-management",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/brands/get-all-for-management?page=1&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "brands",
+                "get-all-for-management"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional search text",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "created_at_desc",
+                  "description": "created_at_asc | created_at_desc | updated_at_asc | updated_at_desc",
+                  "disabled": true
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "description": "true | false",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-by-identifier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/brands/get-by-identifier/:identifier",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "brands",
+                "get-by-identifier",
+                ":identifier"
+              ],
+              "variable": [
+                {
+                  "key": "identifier",
+                  "value": "6a383807e4c983c56c82bb21"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "{\n  \"ar\": \"اسم عربى\",\n  \"en\": \"Massey Ferguson\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "slug",
+                  "value": "massey-ferguson",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "{\n  \"ar\": \"جرارات عالية الجودة\",\n  \"en\": \"High quality spare part for tractors.\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "logo",
+                  "type": "file",
+                  "description": "Optional logo image file",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/brands/create",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "brands",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "{\n  \"ar\": \"Massey Ferguson\",\n  \"en\": \"Massey Ferguson\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "slug",
+                  "value": "massey-ferguson-updated",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "{\n  \"ar\": \"High quality spare part for tractors.\",\n  \"en\": \"High quality spare part for tractors.\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "logo",
+                  "type": "file",
+                  "description": "Optional logo image file",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/brands/update/:id",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "brands",
+                "update",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "6a383807e4c983c56c82bb21"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/brands/delete/:id",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "brands",
+                "delete",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "6a3868514efdcc1785fd5c43"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "categories",
+      "item": [
+        {
+          "name": "get-all",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/categories/get-all?page=1&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "categories",
+                "get-all"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional search text",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "created_at_desc",
+                  "description": "created_at_asc | created_at_desc | updated_at_asc | updated_at_desc",
+                  "disabled": true
+                },
+                {
+                  "key": "parentId",
+                  "value": "root",
+                  "description": "root or category id",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-all-for-management",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/categories/get-all-for-management?page=1&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "categories",
+                "get-all-for-management"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional search text",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "created_at_desc",
+                  "description": "created_at_asc | created_at_desc | updated_at_asc | updated_at_desc",
+                  "disabled": true
+                },
+                {
+                  "key": "parentId",
+                  "value": "root",
+                  "description": "root or category id",
+                  "disabled": true
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "description": "true | false",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-tree",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/categories/get-tree",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "categories",
+                "get-tree"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-by-identifier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/categories/get-by-identifier/:identifier",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "categories",
+                "get-by-identifier",
+                ":identifier"
+              ],
+              "variable": [
+                {
+                  "key": "identifier",
+                  "value": "6a38378be91c7c1cb510cdcc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "{\n  \"ar\": \"Tractors\",\n  \"en\": \"Tractors\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "slug",
+                  "value": "tractors",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "{\n  \"ar\": \"High quality spare part for tractors.\",\n  \"en\": \"High quality spare part for tractors.\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "parentId",
+                  "value": "6a38378be91c7c1cb510cdcc",
+                  "type": "text",
+                  "description": "Optional parent category id",
+                  "disabled": true
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "description": "Optional image file",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/categories/create",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "categories",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "{\n  \"ar\": \"Tractors\",\n  \"en\": \"Tractors\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "slug",
+                  "value": "tractors-updated",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "{\n  \"ar\": \"High quality spare part for tractors.\",\n  \"en\": \"High quality spare part for tractors.\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "parentId",
+                  "value": "null",
+                  "type": "text",
+                  "description": "Use null to remove parent",
+                  "disabled": true
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "description": "Optional image file",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/categories/update/:id",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "categories",
+                "update",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "6a38378be91c7c1cb510cdcc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/categories/delete/:id",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "categories",
+                "delete",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "6a38378be91c7c1cb510cdcc"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "products",
+      "item": [
+        {
+          "name": "get-all",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/products/get-all?page=1&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "products",
+                "get-all"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional search text",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "created_at_desc",
+                  "description": "created_at_asc | created_at_desc | updated_at_asc | updated_at_desc",
+                  "disabled": true
+                },
+                {
+                  "key": "categoryId",
+                  "value": "6a38378be91c7c1cb510cdcc",
+                  "description": "Optional category id",
+                  "disabled": true
+                },
+                {
+                  "key": "brandId",
+                  "value": "6a38378be91c7c1cb510cdcc",
+                  "description": "Optional brand id",
+                  "disabled": true
+                },
+                {
+                  "key": "stockStatus",
+                  "value": "in_stock",
+                  "description": "in_stock | out_of_stock | preorder | contact_for_availability",
+                  "disabled": true
+                },
+                {
+                  "key": "condition",
+                  "value": "new",
+                  "description": "new | used",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "1",
+                  "description": "Optional minimum price",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "20000",
+                  "description": "Optional maximum price",
+                  "disabled": true
+                },
+                {
+                  "key": "isFeatured",
+                  "value": "true",
+                  "description": "true | false",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-all-for-management",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/products/get-all-for-management?page=1&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "products",
+                "get-all-for-management"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional search text",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "created_at_desc",
+                  "description": "created_at_asc | created_at_desc | updated_at_asc | updated_at_desc",
+                  "disabled": true
+                },
+                {
+                  "key": "categoryId",
+                  "value": "6a38378be91c7c1cb510cdcc",
+                  "description": "Optional category id",
+                  "disabled": true
+                },
+                {
+                  "key": "brandId",
+                  "value": "6a38378be91c7c1cb510cdcc",
+                  "description": "Optional brand id",
+                  "disabled": true
+                },
+                {
+                  "key": "stockStatus",
+                  "value": "in_stock",
+                  "description": "in_stock | out_of_stock | preorder | contact_for_availability",
+                  "disabled": true
+                },
+                {
+                  "key": "condition",
+                  "value": "new",
+                  "description": "new | used",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "1",
+                  "description": "Optional minimum price",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "20000",
+                  "description": "Optional maximum price",
+                  "disabled": true
+                },
+                {
+                  "key": "isFeatured",
+                  "value": "true",
+                  "description": "true | false",
+                  "disabled": true
+                },
+                {
+                  "key": "isPublished",
+                  "value": "true",
+                  "description": "true | false",
+                  "disabled": true
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "description": "true | false",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-by-identifier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/products/get-by-identifier/:identifier",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "products",
+                "get-by-identifier",
+                ":identifier"
+              ],
+              "variable": [
+                {
+                  "key": "identifier",
+                  "value": "6a38378be91c7c1cb510cdcc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "{\n  \"ar\": \"Tractor spare part\",\n  \"en\": \"Tractor spare part\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "slug",
+                  "value": "tractor-spare-part",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "{\n  \"ar\": \"High quality spare part for tractors.\",\n  \"en\": \"High quality spare part for tractors.\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "6a38378be91c7c1cb510cdcc",
+                  "type": "text"
+                },
+                {
+                  "key": "brandId",
+                  "value": "6a38378be91c7c1cb510cdcc",
+                  "type": "text"
+                },
+                {
+                  "key": "sku",
+                  "value": "EM-PART-001",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "5000",
+                  "type": "text"
+                },
+                {
+                  "key": "discountPrice",
+                  "value": "4500",
+                  "type": "text",
+                  "description": "Optional discount price",
+                  "disabled": true
+                },
+                {
+                  "key": "stockQuantity",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "stockStatus",
+                  "value": "in_stock",
+                  "type": "text",
+                  "description": "in_stock | out_of_stock | preorder | contact_for_availability"
+                },
+                {
+                  "key": "condition",
+                  "value": "new",
+                  "type": "text",
+                  "description": "new | used"
+                },
+                {
+                  "key": "warranty",
+                  "value": "{\n  \"hasWarranty\": true,\n  \"duration\": \"6 months\",\n  \"details\": {\n    \"ar\": \"High quality spare part for tractors.\",\n    \"en\": \"High quality spare part for tractors.\"\n  }\n}",
+                  "type": "text",
+                  "description": "Optional warranty object",
+                  "disabled": true
+                },
+                {
+                  "key": "specs",
+                  "value": "[\n  {\n    \"key\": {\n      \"ar\": \"Type\",\n      \"en\": \"Type\"\n    },\n    \"value\": {\n      \"ar\": \"Spare part\",\n      \"en\": \"Spare part\"\n    }\n  }\n]",
+                  "type": "text"
+                },
+                {
+                  "key": "tags",
+                  "value": "{\n  \"ar\": [\n    \"tractor\",\n    \"parts\"\n  ],\n  \"en\": [\n    \"tractor\",\n    \"parts\"\n  ]\n}",
+                  "type": "text",
+                  "description": "Optional localized tags",
+                  "disabled": true
+                },
+                {
+                  "key": "isFeatured",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "isPublished",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "description": "Optional product image files",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/products/create",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "products",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "{\n  \"ar\": \"Tractor spare part\",\n  \"en\": \"Tractor spare part\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "slug",
+                  "value": "tractor-spare-part-updated",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "{\n  \"ar\": \"High quality spare part for tractors.\",\n  \"en\": \"High quality spare part for tractors.\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "6a38378be91c7c1cb510cdcc",
+                  "type": "text"
+                },
+                {
+                  "key": "brandId",
+                  "value": "6a38378be91c7c1cb510cdcc",
+                  "type": "text",
+                  "description": "Use null to remove brand",
+                  "disabled": true
+                },
+                {
+                  "key": "sku",
+                  "value": "EM-PART-001-UPD",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "5200",
+                  "type": "text"
+                },
+                {
+                  "key": "discountPrice",
+                  "value": "null",
+                  "type": "text",
+                  "description": "Use null to remove discount price",
+                  "disabled": true
+                },
+                {
+                  "key": "stockQuantity",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "stockStatus",
+                  "value": "in_stock",
+                  "type": "text",
+                  "description": "in_stock | out_of_stock | preorder | contact_for_availability"
+                },
+                {
+                  "key": "condition",
+                  "value": "new",
+                  "type": "text",
+                  "description": "new | used"
+                },
+                {
+                  "key": "warranty",
+                  "value": "null",
+                  "type": "text",
+                  "description": "Use null to remove warranty",
+                  "disabled": true
+                },
+                {
+                  "key": "specs",
+                  "value": "[\n  {\n    \"key\": {\n      \"ar\": \"Type\",\n      \"en\": \"Type\"\n    },\n    \"value\": {\n      \"ar\": \"Spare part\",\n      \"en\": \"Spare part\"\n    }\n  }\n]",
+                  "type": "text"
+                },
+                {
+                  "key": "isFeatured",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "isPublished",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "description": "Optional replacement product image files",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/products/update/:id",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "products",
+                "update",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "6a38378be91c7c1cb510cdcc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{LOCALE}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/products/delete/:id",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "products",
+                "delete",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "6a38378be91c7c1cb510cdcc"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:3000/api/v1"
+    },
+    {
+      "key": "LOCALE",
+      "value": "en"
+    },
+    {
+      "key": "ACCESS_TOKEN",
+      "value": ""
+    },
+    {
+      "key": "REFRESH_TOKEN",
+      "value": ""
+    },
+    {
+      "key": "GOOGLE_TOKEN",
+      "value": ""
+    },
+    {
+      "key": "CUSTOMER_EMAIL",
+      "value": "customer@example.com"
+    },
+    {
+      "key": "PASSWORD",
+      "value": "Password123"
+    },
+    {
+      "key": "NEW_PASSWORD",
+      "value": "Password1234"
+    },
+    {
+      "key": "EMAIL_CODE",
+      "value": "123456"
+    },
+    {
+      "key": "PASSWORD_CODE",
+      "value": "123456"
+    },
+    {
+      "key": "PHONE",
+      "value": "01012345678"
+    },
+    {
+      "key": "ROLE_ID",
+      "value": ""
+    },
+    {
+      "key": "CUSTOMER_ID",
+      "value": ""
+    },
+    {
+      "key": "CATEGORY_ID",
+      "value": ""
+    },
+    {
+      "key": "PARENT_CATEGORY_ID",
+      "value": ""
+    },
+    {
+      "key": "CATEGORY_IDENTIFIER",
+      "value": "tractors"
+    },
+    {
+      "key": "BRAND_ID",
+      "value": ""
+    },
+    {
+      "key": "BRAND_IDENTIFIER",
+      "value": "massey-ferguson"
+    },
+    {
+      "key": "PRODUCT_ID",
+      "value": ""
+    },
+    {
+      "key": "PRODUCT_IDENTIFIER",
+      "value": "tractor-spare-part"
+    },
+    {
+      "key": "INQUIRY_ID",
+      "value": ""
+    }
+  ]
+}

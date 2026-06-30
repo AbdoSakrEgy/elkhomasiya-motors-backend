@@ -115,21 +115,18 @@ const seedDatabase = async (): Promise<void> => {
   const masseyBrand = await BrandModel.create({
     name: { ar: "ماسي فيرجسون", en: "Massey Ferguson" },
     slug: "massey-ferguson",
-    type: "tractor",
     isActive: true,
   });
 
   const newHollandBrand = await BrandModel.create({
     name: { ar: "نيو هولاند", en: "New Holland" },
     slug: "new-holland",
-    type: "tractor",
     isActive: true,
   });
 
   const toyotaBrand = await BrandModel.create({
     name: { ar: "تويوتا", en: "Toyota" },
     slug: "toyota",
-    type: "car",
     isActive: true,
   });
 
@@ -140,7 +137,6 @@ const seedDatabase = async (): Promise<void> => {
       ar: "جرار زراعي بحالة جيدة مناسب للأعمال الزراعية اليومية",
       en: "A reliable tractor suitable for daily farm work",
     },
-    type: "tractor",
     categoryId: tractorCategory._id,
     brandId: masseyBrand._id,
     sku: "TR-MF-285-001",
@@ -180,7 +176,6 @@ const seedDatabase = async (): Promise<void> => {
       ar: "فلتر زيت متوافق مع جرار ماسي فيرجسون 285",
       en: "Oil filter compatible with Massey Ferguson 285",
     },
-    type: "tractor_part",
     categoryId: filtersCategory._id,
     brandId: masseyBrand._id,
     sku: "TP-FLT-MF285-001",
@@ -217,7 +212,6 @@ const seedDatabase = async (): Promise<void> => {
       ar: "تيل فرامل أمامي متوافق مع تويوتا كورولا",
       en: "Front brake pads compatible with Toyota Corolla",
     },
-    type: "car_part",
     categoryId: carPartsCategory._id,
     brandId: toyotaBrand._id,
     sku: "CP-BRK-COR-001",
@@ -297,12 +291,20 @@ const seedDatabase = async (): Promise<void> => {
   await InquiryModel.create({
     userId: customer._id,
     customerName: "Ahmed Customer",
-    phone: "01000000003",
+    phone: ["01000000003"],
     email: "customer@example.com",
     productId: tractor._id,
-    type: "availability_check",
+    quantity: 1,
+    requestType: "purchase_request",
     message: "Is this tractor still available?",
-    status: "new",
+    locationDescription: "Cairo, Egypt",
+    productSnapshot: {
+      name: tractor.name,
+      slug: tractor.slug,
+      sku: tractor.sku,
+      image: tractor.images[0],
+    },
+    requestStatus: "pending_review",
   });
 
   await ReviewModel.create({

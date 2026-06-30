@@ -5,6 +5,7 @@ import { HttpStatusCode } from "../../shared/utils/response/http.status.code.js"
 import type { AuthPayload } from "../../shared/types/jwt.types.js";
 import type {
   CreateInquiryDTO,
+  CreateInquiryWithResponseDTO,
   ListInquiriesQueryDTO,
   UpdateInquiryDTO,
 } from "./inquiry.validators.js";
@@ -16,6 +17,21 @@ export class InquiryController {
     const inquiry = await inquiryService.create(
       req.body as CreateInquiryDTO,
       payload?.userId,
+    );
+    responseHandler(
+      res,
+      HttpStatusCode.CREATED,
+      "inquiry.created",
+      inquiry,
+    );
+  }
+
+  // ---------------------------- createWithResponse ----------------------------
+  async createWithResponse(req: Request, res: Response): Promise<void> {
+    const payload = (req as Request & { payload: AuthPayload }).payload;
+    const inquiry = await inquiryService.createWithResponse(
+      req.body as CreateInquiryWithResponseDTO,
+      payload.userId,
     );
     responseHandler(
       res,

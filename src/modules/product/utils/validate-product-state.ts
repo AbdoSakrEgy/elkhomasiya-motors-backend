@@ -7,12 +7,16 @@ export function validateProductState({
   stockQuantity,
   stockStatus,
 }: {
-  price: number;
+  price?: number | null;
   discountPrice?: number | null;
   stockQuantity: number;
   stockStatus: ProductStockStatus;
 }): void {
-  if (discountPrice !== undefined && discountPrice !== null && discountPrice > price) {
+  if (discountPrice !== undefined && discountPrice !== null && price == null) {
+    throw new BadRequestError("validation.fieldRequired", { field: "price" });
+  }
+
+  if (discountPrice !== undefined && discountPrice !== null && discountPrice > price!) {
     throw new BadRequestError("product.discountPriceTooHigh");
   }
 

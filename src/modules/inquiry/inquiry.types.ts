@@ -1,11 +1,8 @@
-export enum InquiryType {
-  contact = "contact",
-  quoteRequest = "quote_request",
-  availabilityCheck = "availability_check",
+export enum InquiryRequestType {
+  purchaseRequest = "purchase_request",
 }
 
-export enum InquiryStatus {
-  new = "new",
-  contacted = "contacted",
-  closed = "closed",
+export enum InquiryRequestStatus {
+  pendingReview = "pending_review",
+  completed = "completed",
 }

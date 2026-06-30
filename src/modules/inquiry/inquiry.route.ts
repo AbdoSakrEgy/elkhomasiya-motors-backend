@@ -10,6 +10,7 @@ import { validate } from "../../middlewares/validate.js";
 import { asyncHandler } from "../../shared/utils/error/async.handler.js";
 import {
   createInquirySchema,
+  createInquiryWithResponseSchema,
   inquiryIdParamSchema,
   listInquiriesQuerySchema,
   updateInquirySchema,
@@ -23,6 +24,14 @@ router.post(
   optionalAuthenticate,
   validate({ body: createInquirySchema }),
   asyncHandler(inquiryController.create.bind(inquiryController)),
+);
+
+router.post(
+  "/create-with-response",
+  authenticate,
+  authorize("admin"),
+  validate({ body: createInquiryWithResponseSchema }),
+  asyncHandler(inquiryController.createWithResponse.bind(inquiryController)),
 );
 
 router.get(

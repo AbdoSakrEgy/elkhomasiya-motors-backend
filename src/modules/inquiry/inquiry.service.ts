@@ -2,9 +2,16 @@ import type { FilterQuery, SortOrder } from "mongoose";
 import { InquiryModel } from "../../DB/models/communication/inquiry.model.js";
 import type { Inquiry } from "../../DB/models/communication/inquiry.model.js";
 import { ProductModel } from "../../DB/models/product/product.model.js";
-import { NotFoundError } from "../../shared/utils/error/app.error.js";
+import { RoleModel } from "../../DB/models/user/role.model.js";
+import { UserModel } from "../../DB/models/user/user.model.js";
+import {
+  BadRequestError,
+  NotFoundError,
+} from "../../shared/utils/error/app.error.js";
+import { InquiryRequestStatus } from "./inquiry.types.js";
 import type {
   CreateInquiryDTO,
+  CreateInquiryWithResponseDTO,
   ListInquiriesQueryDTO,
   UpdateInquiryDTO,
 } from "./inquiry.validators.js";
@@ -13,21 +20,84 @@ import { normalizeInquiryPhone } from "./utils/normalize-inquiry-phone.js";
 export class InquiryService {
   // ============================ create ============================
   async create(data: CreateInquiryDTO, userId?: string) {
-    // step: validate the referenced public product
-    if (data.productId) {
-      const product = await ProductModel.exists({
-        _id: data.productId,
-        isPublished: true,
-        isActive: true,
-      });
-      if (!product) throw new NotFoundError("resource.product");
-    }
+    // step: retrieve the referenced public product
+    const product = await ProductModel.findOne({
+      _id: data.productId,
+      isPublished: true,
+      isActive: true,
+    })
+      .select("name slug sku images")
+      .lean();
+    if (!product) throw new NotFoundError("resource.product");
 
-    // step: create inquiry with normalized contact data
+    // step: create inquiry with normalized contact data and product snapshot
     return InquiryModel.create({
       ...data,
       ...(userId && { userId }),
-      phone: normalizeInquiryPhone(data.phone),
+      phone: data.phone.map((phone) => normalizeInquiryPhone(phone)),
+      productSnapshot: {
+        name: product.name,
+        slug: product.slug,
+        sku: product.sku,
+        ...(product.images[0] && { image: product.images[0] }),
+      },
+    });
+  }
+
+  // ============================ createWithResponse ============================
+  async createWithResponse(
+    data: CreateInquiryWithResponseDTO,
+    adminId: string,
+  ) {
+    // step: retrieve the referenced active product
+    const product = await ProductModel.findOne({
+      _id: data.productId,
+      isActive: true,
+    })
+      .select("name slug sku images")
+      .lean();
+    if (!product) throw new NotFoundError("resource.product");
+
+    // step: retrieve the selected active customer account
+    const customerRole = await RoleModel.findOne({
+      slug: "customer",
+      isActive: true,
+    })
+      .select("_id")
+      .lean();
+    if (!customerRole)
+      throw new BadRequestError("auth.customerRoleNotConfigured");
+
+    const customer = await UserModel.findOne({
+      _id: data.userId,
+      roleId: customerRole._id,
+      isActive: true,
+    })
+      .select("name email phone")
+      .lean();
+    if (!customer) throw new NotFoundError("resource.user");
+
+    // step: create manual inquiry with the admin response already recorded
+    return InquiryModel.create({
+      userId: data.userId,
+      customerName: customer.name,
+      phone: [normalizeInquiryPhone(customer.phone)],
+      email: customer.email,
+      productId: data.productId,
+      quantity: data.quantity,
+      requestType: data.requestType,
+      ...(data.message !== undefined && { message: data.message }),
+      productSnapshot: {
+        name: product.name,
+        slug: product.slug,
+        sku: product.sku,
+        ...(product.images[0] && { image: product.images[0] }),
+      },
+      requestStatus: InquiryRequestStatus.completed,
+      adminResponse: data.adminResponse,
+      ...(data.adminNotes !== undefined && { adminNotes: data.adminNotes }),
+      createdByAdminId: adminId,
+      respondedAt: new Date(),
     });
   }
 
@@ -38,8 +108,8 @@ export class InquiryService {
     const limit = Math.min(Math.max(Number(query.limit ?? 20), 1), 100);
     const filter: FilterQuery<Inquiry> = {};
 
-    if (query.status) filter.status = query.status;
-    if (query.type) filter.type = query.type;
+    if (query.requestStatus) filter.requestStatus = query.requestStatus;
+    if (query.requestType) filter.requestType = query.requestType;
     if (query.productId) filter.productId = query.productId;
 
     // sub-step: apply escaped text search
@@ -50,6 +120,9 @@ export class InquiryService {
         { phone: { $regex: keyword, $options: "i" } },
         { email: { $regex: keyword, $options: "i" } },
         { message: { $regex: keyword, $options: "i" } },
+        { "productSnapshot.name.ar": { $regex: keyword, $options: "i" } },
+        { "productSnapshot.name.en": { $regex: keyword, $options: "i" } },
+        { "productSnapshot.sku": { $regex: keyword, $options: "i" } },
       ];
     }
     const sortOptions: Record<string, Record<string, SortOrder>> = {
@@ -69,6 +142,7 @@ export class InquiryService {
       InquiryModel.find(filter)
         .populate("productId", "name slug sku images")
         .populate("userId", "name email phone")
+        .populate("createdByAdminId", "name email phone")
         .sort(sort)
         .skip((page - 1) * limit)
         .limit(limit)
@@ -95,6 +169,7 @@ export class InquiryService {
     const inquiry = await InquiryModel.findById(id)
       .populate("productId", "name slug sku images")
       .populate("userId", "name email phone")
+      .populate("createdByAdminId", "name email phone")
       .lean();
 
     if (!inquiry) throw new NotFoundError("resource.inquiry");
@@ -105,16 +180,35 @@ export class InquiryService {
 
   // ============================ update ============================
   async update(id: string, data: UpdateInquiryDTO) {
-    // step: prepare nullable fields
-    const update: Record<string, unknown> = { ...data };
-    if (data.adminNotes === null) delete update["adminNotes"];
+    // step: prepare workflow and response updates
+    const set: Record<string, unknown> = {};
+    const unset: Record<string, 1> = {};
+
+    if (data.requestStatus !== undefined) {
+      set["requestStatus"] = data.requestStatus;
+    }
+    if (data.adminNotes !== undefined) {
+      if (data.adminNotes === null) unset["adminNotes"] = 1;
+      else set["adminNotes"] = data.adminNotes;
+    }
+    if (data.adminResponse !== undefined) {
+      if (data.adminResponse === null) {
+        unset["adminResponse"] = 1;
+        unset["respondedAt"] = 1;
+      } else {
+        for (const [key, value] of Object.entries(data.adminResponse)) {
+          if (value !== undefined) set[`adminResponse.${key}`] = value;
+        }
+        set["respondedAt"] = new Date();
+      }
+    }
 
     // step: update inquiry workflow
     const inquiry = await InquiryModel.findByIdAndUpdate(
       id,
       {
-        $set: update,
-        ...(data.adminNotes === null && { $unset: { adminNotes: 1 } }),
+        ...(Object.keys(set).length > 0 && { $set: set }),
+        ...(Object.keys(unset).length > 0 && { $unset: unset }),
       },
       { new: true, runValidators: true },
     );

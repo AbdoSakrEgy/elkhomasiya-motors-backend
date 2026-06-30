@@ -16,6 +16,12 @@ const localizedProductDescriptionSchema = z.object({
   en: z.string().max(10000).trim().optional(),
 });
 
+// ============================ localizedRequiredProductDescriptionSchema ============================
+const localizedRequiredProductDescriptionSchema = z.object({
+  ar: z.string().min(1).max(10000).trim(),
+  en: z.string().min(1).max(10000).trim(),
+});
+
 // ============================ localizedProductTagsSchema ============================
 const localizedProductTagsSchema = z.object({
   ar: z.array(z.string().min(1).max(50).trim()).max(30).optional(),
@@ -40,17 +46,17 @@ export const createProductSchema = z
   .object({
     name: localizedProductNameSchema,
     slug: z.string().min(1).max(220).trim().toLowerCase(),
-    description: localizedProductDescriptionSchema.optional(),
+    description: localizedRequiredProductDescriptionSchema,
     categoryId: z.string().regex(/^[0-9a-fA-F]{24}$/),
-    brandId: z.string().regex(/^[0-9a-fA-F]{24}$/).optional(),
+    brandId: z.string().regex(/^[0-9a-fA-F]{24}$/),
     sku: z.string().min(1).max(100).trim().toUpperCase(),
-    price: z.number().nonnegative(),
+    price: z.number().nonnegative().optional(),
     discountPrice: z.number().nonnegative().optional(),
     stockQuantity: z.number().int().nonnegative().optional(),
     stockStatus: z.enum(Object.values(ProductStockStatus)).optional(),
     condition: z.enum(Object.values(ProductCondition)).optional(),
     warranty: productWarrantySchema.optional(),
-    specs: z.array(productSpecSchema).max(100).optional(),
+    specs: z.array(productSpecSchema).min(1).max(100),
     tags: localizedProductTagsSchema.optional(),
     isFeatured: z.boolean().optional(),
     isPublished: z.boolean().optional(),
@@ -59,7 +65,9 @@ export const createProductSchema = z
   .strict()
   .refine(
     (data) =>
-      data.discountPrice === undefined || data.discountPrice <= data.price,
+      data.discountPrice === undefined ||
+      data.price === undefined ||
+      data.discountPrice <= data.price,
     {
       path: ["discountPrice"],
       message: "product.discountPriceTooHigh",
